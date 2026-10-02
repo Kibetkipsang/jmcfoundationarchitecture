@@ -97,10 +97,46 @@ export const login = async (req, res) => {
         }
 
         const token = jwt.sign({id: user.id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '15m'})
-
+        
+        res.status(200).json({
+            message: "Login successful.",
+            token,
+            user: {
+                id: user.id,
+                email: user.email,
+                username: user.username
+            }
+        });
 
     }catch(err){
         console.log("Login Error,", err)
+        return res.status(500).json({
+            error: "Something went wrong. Please try again later."
+        })
+    }
+};
+
+export const getMe = async (req, res) => {
+    try{
+        const user = await prisma.user.findUnique({
+            where: {id: req.user.id},
+            select: {
+                id: true, 
+                email: true,
+                username: true,
+                createdAt: true
+            }
+        })
+
+        if(!user){
+            return res.status(404).json({
+                error: "User not found."
+            })
+        }
+
+        res.json({user})
+    }catch(err){
+        console.log("Getme Error", err)
         return res.status(500).json({
             error: "Something went wrong. Please try again later."
         })
