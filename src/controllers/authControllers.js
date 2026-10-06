@@ -143,3 +143,16 @@ export const getMe = async (req, res) => {
     }
 };
 
+
+export const logout = async (req, res) => {
+    try{
+        res.status(200).json({
+            message: "Logged out succesfully"
+        })
+    }catch(err){
+        console.log("Logout Error", err)
+        return res.status(500).json({
+            error: "Something went wrong. Please try again later."
+        })
+    }
+}
